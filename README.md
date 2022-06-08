@@ -1,9 +1,3 @@
-COMMANDES QUE JE ME RAPPELLE PAS :
-
-php bin/console d:m:m 
-php bin/console d:f:l 
-
-
 Stack de développement PHP
 ==========================
 
