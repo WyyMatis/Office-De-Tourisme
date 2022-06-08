@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Planning Global{% endblock %}
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js" integrity="sha256-XOMgUu4lWKSn8CFoJoBoGd9Q/OET+xrfGYSo+AKpFhE=" crossorigin="anonymous"></script>{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" integrity="sha256-16PDMvytZTH9heHu9KBPjzrFTaoner60bnABykjNiM0=" crossorigin="anonymous">{% endblock %}
+{% block titre %}PLANNING GLOBAL{% endblock %}
+
+{% block listeNavBar %}
+    <li class="nav-item">
+        <a class="nav-link" style="color:white" href="/dashboardRespCons">Tableau de bord</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" style="color:white" href="/dashboardRespCons/listeConseillers">Liste des conseillers</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" style="color:white" href="/dashboardRespCons/stats">Statistiques</a>
+    </li>
+{% endblock %}
+
+{% block body %}
+    <style>
+        .main-container { margin: 1em auto; max-width: 1850px; width: 100%;}
+        .titreContainer {display: flex; margin-bottom: 30px; margin-top: 30px}
+        .titrePlannning {text-decoration: underline; font-weight: bold; text-align: center}
+        .planningsContainer {display: flex; justify-content: space-between;}
+        .planning {width: 900px; height: 650px}
+    </style>
+    <script>
+        window.onload = () => {
+            let calendarEltC = document.querySelector("#planningGlobalCreneaux")
+            let calendarEltR = document.querySelector("#planningGlobalRDV")
+
+            let calendarCreneaux = new FullCalendar.Calendar(calendarEltC, {
+                initialView: 'timeGridWeek',
+                locale: 'fr',
+                weekNumberCalculation: 'ISO',
+                timeZone: 'Europe/Paris',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek,timeGridDay'
+                },
+                views: {
+                    timeGridWeek : {
+                        type: 'timeGrid',
+                        slotMinTime: '08:00:00',
+                        slotMaxTime: '20:00:00',
+                        weekends: false,
+                    },
+                    timeGridDay : {
+                        type: 'timeGrid',
+                        slotMinTime: '08:00:00',
+                        slotMaxTime: '20:00:00',
+                        weekends: false,
+                    }
+                },
+                editable: true,
+                eventMaxStack: 1,
+                allDaySlot: false,
+                events: {{ dataAllCreneaux|raw }}
+            })
+
+            let calendarRDV = new FullCalendar.Calendar(calendarEltR, {
+                initialView: 'timeGridWeek',
+                locale: 'fr',
+                weekNumberCalculation: 'ISO',
+                timeZone: 'Europe/Paris',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek,timeGridDay'
+                },
+                views: {
+                    timeGridWeek : {
+                        type: 'timeGrid',
+                        slotMinTime: '08:00:00',
+                        slotMaxTime: '20:00:00',
+                        slotDuration: '00:15:00',
+                        weekends: false,
+                    },
+                    timeGridDay : {
+                        type: 'timeGrid',
+                        slotMinTime: '08:00:00',
+                        slotMaxTime: '20:00:00',
+                        slotDuration: '00:15:00',
+                        weekends: false,
+                    }
+                },
+                eventMaxStack: 1,
+                allDaySlot: false,
+                events: {{ dataAllRDV|raw }}
+            })
+
+            calendarCreneaux.render()
+            calendarRDV.render()
+        }
+    </script>
+
+    <div class="main-container">
+        <div class="titreContainer">
+            <div style="width: 900px; margin-right: 50px"><h3 class="titrePlannning">Plannning des créneaux des conseillers :</h3></div>
+            <div style="width: 900px"><h3 class="titrePlannning">Plannning global des RDV :</h3></div>
+        </div>
+        <div class="planningsContainer">
+            <div id="planningGlobalCreneaux" class="planning"></div>
+            <div id="planningGlobalRDV" class="planning"></div>
+        </div>
+    </div>
+{% endblock %}

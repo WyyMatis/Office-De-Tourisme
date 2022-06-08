@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Conseillers{% endblock %}
+
+{% block titre %}LISTE DES CONSEILLERS{% endblock %}
+
+{% block listeNavBar %}
+    <li class="nav-item">
+        <a class="nav-link" style="color:white" href="/dashboardRespCons">Tableau de bord</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" style="color:white" href="/dashboardRespCons/stats">Statistiques</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" style="color:white" href="/dashboardRespCons/planningGlobal">Planning Global</a>
+    </li>
+{% endblock %}
+
+{% block body %}
+
+    <style>
+        .example-wrapper { margin: 2em auto; max-width: 1100px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+        .listeConseillers {max-width: 700px; margin: auto}
+        .headWrapper {display: flex; margin-bottom: 50px; justify-content: space-between}
+        .btn-secondary {background-color:  #343a40}
+        .dropdown-menu-dark {color: #dee2e6; background-color: #343a40; border-color: rgba(0,0,0,.15);}
+        .dropdown-toggle:after {margin-left: 1.255em}
+        .dropdown-item {color: #dee2e6;}
+        .filtreCategorie {margin-bottom: 0; text-align: center; text-decoration: underline;}
+        .headList {background-color: #f8f9fa; border-bottom: 3px solid black;}
+    </style>
+
+    <div class="example-wrapper">
+
+        <div class="headWrapper">
+
+            <!-- popup add -->
+            <div class="modal fade" id="addModal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel" style="color: green">Ajouter un Conseiller</h5>
+                        </div>
+                        <div class="modal-body">
+                            renseigner toutes les informations
+
+                            {{ form_start(form) }}
+
+                            {{ form_errors(form) }}
+
+                            <br>
+                            {{ form_widget(form.nom) }}
+                            <br>
+                            {{ form_widget(form.prenom) }}
+
+                            <br>
+                            {{ form_widget(form.date_de_naissance) }}
+
+                            <br>
+                            {{ form_widget(form.email) }}
+
+                            <br>
+                            {{ form_widget(form.tel) }}
+
+                            <br>
+                            {{ form_widget(form.langues) }}
+                            <br>
+                            <br>
+                            {{ form_widget(form.domaines) }}
+
+                            {{ form_rest(form) }}
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-outline-success">Ajouter</button>
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </div>
+            </div>    
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal" type="button">Ajouter un conseiller</button>
+
+            <button class="dropdownButton btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">Filtrer par</button>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+                <li><a class="dropdown-item" href="/dashboardRespCons/listeConseillers">Alphabétique</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <p class="filtreCategorie">Langues :</p>
+                <li><hr class="dropdown-divider"></li>
+                {% for l in langues %}
+                <li><a class="dropdown-item" href="/listeConseillers/filtrerConseillerParLangue/{{ l.langage }}">{{ l.langage }}</a></li>
+                {% endfor %}
+                <li><hr class="dropdown-divider"></li>
+                <p class="filtreCategorie">Spécialités :</p>
+                <li><hr class="dropdown-divider"></li>
+                {% for s in specialite %}
+                <li><a class="dropdown-item" href="/listeConseillers/filtrerConseillerParSpecialite/{{ s.domaine }}">{{ s.domaine }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="listeConseillers">
+            <table class="table">
+                <thead class="headList table-light">
+                    <tr>
+                        <th scope="col">Prénom</th>
+                        <th scope="col">Nom</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for cs in conseillers %}
+                    <tr>
+                        <td>{{ cs.prenom }}</td>
+                        <td>{{ cs.nom }}</td>
+                        <td style="width: 120px;"><a class="btn btn-primary" href="/dashboardRespCons/listeConseillers/conseillers/{{ cs.id }}" role="button">+INFOS</a></td>
+                        <td style="width: 60px;"><button class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#ModalConsDelete{{ cs.id }}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                </svg></button>
+
+                            <!-- Pop up delete -->
+                            <div class="modal fade" id="ModalConsDelete{{ cs.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel" style="color: red">Supprimer un Conseiller</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            Êtes-vous sûr de vouloir supprimer {{ cs.prenom }} {{ cs.nom }} ?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                                            <a type="button" class="btn btn-danger" href="/deleteConseiller/{{ cs.id }}" role="button">Oui</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>    
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,174 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conseiller {{ conseillers.prenom }} {{ conseillers.nom }}{% endblock %}
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js" integrity="sha256-XOMgUu4lWKSn8CFoJoBoGd9Q/OET+xrfGYSo+AKpFhE=" crossorigin="anonymous"></script>{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" integrity="sha256-16PDMvytZTH9heHu9KBPjzrFTaoner60bnABykjNiM0=" crossorigin="anonymous">{% endblock %}
+{% block titre %}Information du Conseiller{% endblock %}
+
+{% block listeNavBar %}
+    <li class="nav-item">
+        <a class="nav-link" style="color:white" href="/dashboardRespCons">Tableau de bord</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" style="color:white" href="/dashboardRespCons/stats">Statistiques</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" style="color:white" href="/dashboardRespCons/planningGlobal">Planning Global</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" style="color:white" href="/dashboardRespCons/listeConseillers">Liste des conseillers</a>
+    </li>
+{% endblock %}
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 1200px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+        #planning {width: 100%; height: 780px; margin: auto;}
+    </style>
+    <script>
+        window.onload = () => {
+            let calendarElt = document.querySelector("#planning")
+
+            let calendar = new FullCalendar.Calendar(calendarElt, {
+                    initialView: 'timeGridWeek',
+                    locale: 'fr',
+                    weekNumberCalculation: 'ISO',
+                    timeZone: 'Europe/Paris',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'timeGridWeek,timeGridDay'
+                    },
+                    views: {
+                        timeGridWeek : {
+                            type: 'timeGrid',
+                            slotMinTime: '08:00:00',
+                            slotMaxTime: '20:00:00',
+                            weekends: false,
+                            eventMaxStack: 1,
+                        },
+                        timeGridDay : {
+                            type: 'timeGrid',
+                            slotMinTime: '08:00:00',
+                            slotMaxTime: '20:00:00',
+                            slotDuration: '00:15:00',
+                            weekends: false,
+                        }
+                    },
+                    allDaySlot: false,
+                    events: {{ dataCreneaux|raw }}
+            })
+
+            calendar.render()
+        }
+    </script>
+
+    <div class="jumbotron media justify-content-center">
+                <div class="media-left pr30 mr-5" >
+                        <img class="media-object mw150" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="...">
+                </div>
+                <div class="ml-5">
+                    <h2 class="media-heading">- Profile -</h2>
+                    <div class="col-md-6">
+                        <div class="">
+                            <table class="table table-user-information">
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-user  text-primary"></span>
+                                            Prenom
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        {{ conseillers.prenom }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-cloud text-primary"></span>
+                                            Nom
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        {{ conseillers.nom }}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-bookmark text-primary"></span>
+                                            Age
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        {{ conseillers.getAge }}
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-eye-open text-primary"></span>
+                                            Email
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        {{ conseillers.email }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-envelope text-primary"></span>
+                                            Téléphone
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        {{ conseillers.tel }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-calendar text-primary"></span>
+                                            Langues
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        {% for cs in conseillers.getLangues %}
+                                            {{ cs.langage}}
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            <span class="glyphicon glyphicon-calendar text-primary"></span>
+                                            Spécialités
+                                        </strong>
+                                    </td>
+                                    <td class="text-primary">
+                                        {% for cs in conseillers.getDomaines %}
+                                        {{ cs.domaine }}
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+    </div>
+
+    <div class="example-wrapper">
+        <div id="planning"></div>
+    </div>
+{% endblock %}
